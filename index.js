@@ -19,6 +19,7 @@ async function run() {
     try {
         const categoriesCollection = client.db('secondHome').collection('categories');
         const productCollection = client.db('secondHome').collection('allproduct');
+        const usersCollection = client.db('secondHome').collection('users');
 
         app.get('/categories', async (req, res) => {
             const query = {};
@@ -32,6 +33,12 @@ async function run() {
             const query = { p_id: id };
             const product = await productCollection.find(query).toArray();
             res.send(product);
+        });
+
+        app.post('/users', async (req, res) => {
+            const users = req.body;
+            const result = await usersCollection.insertOne(users);
+            res.send(result);
         })
     }
     finally {
