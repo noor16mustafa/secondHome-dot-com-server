@@ -20,6 +20,19 @@ async function run() {
         const categoriesCollection = client.db('secondHome').collection('categories');
         const productCollection = client.db('secondHome').collection('allproduct');
 
+        app.get('/categories', async (req, res) => {
+            const query = {};
+            const category = await categoriesCollection.find(query).toArray();
+            res.send(category);
+        });
+
+        app.get('/category/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { p_id: id };
+            const product = await productCollection.find(query).toArray();
+            res.send(product);
+        })
     }
     finally {
 
