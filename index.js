@@ -20,6 +20,8 @@ async function run() {
         const categoriesCollection = client.db('secondHome').collection('categories');
         const productCollection = client.db('secondHome').collection('allproduct');
         const usersCollection = client.db('secondHome').collection('users');
+        const bookingCollection = client.db('secondHome').collection('booking');
+
 
         app.get('/categories', async (req, res) => {
             const query = {};
@@ -38,6 +40,12 @@ async function run() {
         app.post('/users', async (req, res) => {
             const users = req.body;
             const result = await usersCollection.insertOne(users);
+            res.send(result);
+        });
+
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            const result = await bookingCollection.insertOne(booking);
             res.send(result);
         })
     }
