@@ -21,6 +21,7 @@ async function run() {
         const productCollection = client.db('secondHome').collection('allproduct');
         const usersCollection = client.db('secondHome').collection('users');
         const bookingCollection = client.db('secondHome').collection('booking');
+        const advertiseCollection = client.db('secondHome').collection('advertise');
 
 
         app.get('/categories', async (req, res) => {
@@ -48,6 +49,12 @@ async function run() {
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         });
+        // add to advertise
+        app.post('/advertise', async (req, res) => {
+            const advertising = req.body;
+            const result = await advertiseCollection.insertOne(advertising);
+            res.send(result);
+        });
 
         //------seller for admin routes----
         app.get('/sellers', async (req, res) => {
@@ -72,7 +79,7 @@ async function run() {
         app.delete('/seller/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
-            const result = await doctorsCollection.deleteOne(filter);
+            const result = await usersCollection.deleteOne(filter);
             res.send(result);
         });
 
@@ -82,10 +89,11 @@ async function run() {
             const users = await usersCollection.find(query).toArray();
             res.send(users);
         });
+        //delete buyer
         app.delete('/buyer/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
-            const result = await doctorsCollection.deleteOne(filter);
+            const result = await usersCollection.deleteOne(filter);
             res.send(result);
         });
 
@@ -95,7 +103,30 @@ async function run() {
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isAdmin: user?.role === 'Admin' });
-        })
+        });
+
+        //-----add product---
+        app.post('/addproduct', async (req, res) => {
+            const product = req.body;
+            product['time'] = new Date();
+            const result = await productCollection.insertOne(product);
+            res.send(result);
+        });
+        //-----seller get his/her product ---
+        app.get('/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const products = await productCollection.find(query).toArray();
+            res.send(products);
+        });
+        //----delete product
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+
+            const filter = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(filter);
+            res.send(result);
+        });
 
     }
     finally {
