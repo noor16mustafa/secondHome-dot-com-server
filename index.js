@@ -55,6 +55,12 @@ async function run() {
             const result = await advertiseCollection.insertOne(advertising);
             res.send(result);
         });
+        //get advertise product
+        app.get('/advertise', async (req, res) => {
+            const query = {};
+            const product = await advertiseCollection.find(query).toArray();
+            res.send(product);
+        })
 
         //------seller for admin routes----
         app.get('/sellers', async (req, res) => {
@@ -103,6 +109,20 @@ async function run() {
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isAdmin: user?.role === 'Admin' });
+        });
+        //------get seller 
+        app.get('/seller/verify/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isVerified: user?.status === 'verified' });
+        });
+        //-----get verified seller
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isSeller: user?.role === 'Seller' });
         });
 
         //-----add product---
