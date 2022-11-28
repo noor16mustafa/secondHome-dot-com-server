@@ -43,12 +43,20 @@ async function run() {
             const result = await usersCollection.insertOne(users);
             res.send(result);
         });
-
+        //make bookings
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const result = await bookingCollection.insertOne(booking);
             res.send(result);
         });
+        //get from booking data for payment
+        app.get('/booking/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const bookings = await bookingCollection.findOne(query);
+            res.send(bookings);
+        })
+
         // add to advertise
         app.post('/advertise', async (req, res) => {
             const advertising = req.body;
@@ -62,7 +70,7 @@ async function run() {
             res.send(product);
         })
 
-        //------seller for admin routes----
+        //------get all seller ----
         app.get('/sellers', async (req, res) => {
             const query = { role: 'Seller' };
             const users = await usersCollection.find(query).toArray();
@@ -110,14 +118,14 @@ async function run() {
             const user = await usersCollection.findOne(query);
             res.send({ isAdmin: user?.role === 'Admin' });
         });
-        //------get seller 
+        //------get verified seller 
         app.get('/seller/verify/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
             res.send({ isVerified: user?.status === 'verified' });
         });
-        //-----get verified seller
+        //-----get  seller
         app.get('/users/seller/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email }
@@ -138,6 +146,13 @@ async function run() {
             const query = { email: email };
             const products = await productCollection.find(query).toArray();
             res.send(products);
+        });
+        //buyer get his booking collection
+        app.get('/buyer/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const orders = await bookingCollection.find(query).toArray();
+            res.send(orders);
         });
         //----delete product
         app.delete('/product/:id', async (req, res) => {
