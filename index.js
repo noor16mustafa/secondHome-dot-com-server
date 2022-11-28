@@ -197,6 +197,16 @@ async function run() {
             const result = await productCollection.deleteOne(filter);
             res.send(result);
         });
+        //delete after paid
+        app.delete('/paid/:id', async (req, res) => {
+            const id = req.params.id;
+
+            const filter = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(filter);
+            const query = { uid: id }
+            const adDelete = await advertiseCollection.deleteOne(query);
+            res.send(result);
+        });
 
     }
     finally {
